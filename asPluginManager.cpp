@@ -47,7 +47,6 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         height += c->height();
     }
     layout->addStretch(1);
-    layout->layout();
     uiWidget->setMinimumSize(100, min(height, 400));
 }
 
