@@ -29,7 +29,7 @@ bool asPluginManager::init(PluginHub *hub, int id, int groupId, const QString&) 
 void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     QWidget *contents = uiWidget->findChild<QWidget*>("contents");
     QVBoxLayout *layout = (QVBoxLayout*)contents->layout();
-    QString dir = m_hub->property("pluginStorageHome").toString().append("/../PluginsA");
+    QString dir = m_hub->property("pluginStorageHome").toString().append("/../Plugins");
     m_dir = new QDir(dir);
     m_dir->setFilter(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
     QStringList entries = m_dir->entryList();
