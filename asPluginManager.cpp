@@ -26,6 +26,8 @@ bool asPluginManager::init(PluginHub *hub, int id, int groupId, const QString&) 
     return true;
 }
 
+#define min(a,b) (a>b ? b : a)
+
 void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     QWidget *contents = uiWidget->findChild<QWidget*>("contents");
     QVBoxLayout *layout = (QVBoxLayout*)contents->layout();
@@ -33,6 +35,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     m_dir = new QDir(dir);
     m_dir->setFilter(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
     QStringList entries = m_dir->entryList();
+    int height = 0;
     for (int i=0; i<entries.length(); i++) {
         QString name = entries[i];
         name.remove(QRegExp("\\.afplugin(\\.off)*$"));
@@ -41,8 +44,11 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
             c->setChecked(true);
         layout->addWidget(c, 0, Qt::AlignLeft);
         connect(c, SIGNAL( toggled(bool) ), SLOT( handleToggle(bool) ) );
+        height += c->height();
     }
     layout->addStretch(1);
+    layout->layout();
+    uiWidget->setMinimumSize(100, min(height, 400));
 }
 
 void asPluginManager::handleToggle(bool enable) {
