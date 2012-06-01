@@ -5,7 +5,7 @@
 
 # what we build here (plugin name and version)
 TARGET = asPluginManager
-VERSION = 1.0.1
+VERSION = 1.0.2
 
 include ( ../PluginDefaults/PluginDefaults.pri )
 
