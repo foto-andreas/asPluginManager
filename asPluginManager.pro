@@ -27,7 +27,8 @@ RESOURCES +=
 # the other files we pack in the resources
 OTHER_FILES += \ 
     asPluginManager.afpxml \
-    xlate.pro
+    xlate.pro \
+    TODO.txt
 
 # the user interface file
 FORMS += \ 
@@ -51,6 +52,7 @@ QMAKE_POST_LINK += "; strip 'lib$${TARGET}.so.$${VERSION}'"
 QMAKE_POST_LINK += "; ./afz '$$TARGET' '$$VERSION'"
 }
 }
+
 
 
 
