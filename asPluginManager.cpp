@@ -29,7 +29,7 @@ bool asPluginManager::init(PluginHub *hub, int id, int groupId, const QString&) 
 void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     QWidget *contents = uiWidget->findChild<QWidget*>("contents");
     QVBoxLayout *layout = (QVBoxLayout*)contents->layout();
-    QString dir = m_hub->property("pluginStorageHome").toString().append("/../Plugins");
+    QString dir = m_hub->property("pluginStorageHome").toString().append("/../PluginsA");
     m_dir = new QDir(dir);
     m_dir->setFilter(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
     QStringList entries = m_dir->entryList();
@@ -42,6 +42,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         layout->addWidget(c, 0, Qt::AlignLeft);
         connect(c, SIGNAL( toggled(bool) ), SLOT( handleToggle(bool) ) );
     }
+    layout->addStretch(1);
 }
 
 void asPluginManager::handleToggle(bool enable) {
