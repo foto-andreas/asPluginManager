@@ -4,6 +4,5 @@ Ideen:
 - Alle deselektieren
 - Liste mit aktueller Konfig schreiben
 - Liste mit aktueller Konfig lesen
-- Anzeige, welche Plugins in Bibble geladen sind (beim Start lt. Verzeichnis)
 - Suche nach Ideen, ob man anzeigen kann, dass ein Plugin in ASP eingeschaltet ist
 - Auto Update einbauen

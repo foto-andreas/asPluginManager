@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QString>
+#include <QMessageBox>
 
 #include <QFile>
 #include <QDir>
@@ -40,8 +41,10 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         QString name = entries[i];
         name.remove(QRegExp("\\.afplugin(\\.off)*$"));
         QCheckBox *c = new QCheckBox(name, contents);
-        if (entries[i].endsWith("afplugin"))
+        if (entries[i].endsWith("afplugin")) {
             c->setChecked(true);
+            c->setStyleSheet("QCheckBox { font-weight: bold; }");
+        }
         layout->addWidget(c, 0, Qt::AlignLeft);
         connect(c, SIGNAL( toggled(bool) ), SLOT( handleToggle(bool) ) );
         height += c->height();
@@ -52,12 +55,18 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
 
 void asPluginManager::handleToggle(bool enable) {
     QString who = ((QCheckBox*)QObject::sender())->text();
-    if (enable)
+    if (enable) {
         QFile::rename(m_dir->absoluteFilePath(who) + ".afplugin.off",
                       m_dir->absoluteFilePath(who) + ".afplugin");
-    else
+    } else {
         QFile::rename(m_dir->absoluteFilePath(who) + ".afplugin",
                       m_dir->absoluteFilePath(who) + ".afplugin.off");
+        if (who.startsWith("asPluginManager")) {
+            QMessageBox msgBox;
+            msgBox.setText(tr("You disabled asPluginManager itself."));
+            msgBox.exec();
+        }
+    }
 
     qDebug() << "Toggled Plugin " << who << ":" << (enable ? "on" : "off");
 }
