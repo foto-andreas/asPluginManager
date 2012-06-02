@@ -5,7 +5,7 @@
 
 # what we build here (plugin name and version)
 TARGET = asPluginManager
-VERSION = 1.0.2
+VERSION = 1.0.3
 
 include ( ../PluginDefaults/PluginDefaults.pri )
 
@@ -15,11 +15,21 @@ include ( ../PluginDefaults/PluginDefaults.pri )
 
 # our header files
 HEADERS += \ 
-    asPluginManager.h
+    asPluginManager.h \
+    ConfigurationMapper.h \
+    ../PluginTools/WebInfos.h \
+    ../PluginTools/WebContents.h \
+    ../PluginTools/ConfigFile.h \
+    ../PluginTools/ToolData.h
 
 # our source files
 SOURCES += \ 
-    asPluginManager.cpp
+    asPluginManager.cpp \
+    ConfigurationMapper.cpp \
+    ../PluginTools/WebInfos.cpp \
+    ../PluginTools/WebContents.cpp \
+    ../PluginTools/ConfigFile.cpp \
+    ../PluginTools/ToolData.cpp
 
 # our resource file with html pages and images
 RESOURCES += 
@@ -52,6 +62,16 @@ QMAKE_POST_LINK += "; strip 'lib$${TARGET}.so.$${VERSION}'"
 QMAKE_POST_LINK += "; ./afz '$$TARGET' '$$VERSION'"
 }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
