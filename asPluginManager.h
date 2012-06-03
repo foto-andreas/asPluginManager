@@ -6,6 +6,7 @@
 #include <QString>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QLabel>
 
 #include <QFile>
 #include <QDir>
@@ -19,6 +20,7 @@
 #include <PluginImageSettings.h>
 
 #include "WebInfos.h"
+#include "ToolData.h"
 
 #include "ConfigurationMapper.h"
 
@@ -27,7 +29,9 @@ class asPluginManager : public QObject, public B5Plugin
     Q_OBJECT
 
 public:
-    asPluginManager() : m_hub( NULL ), m_pluginId( -1 ), m_groupId( -1 ), m_cblist(), m_ownerList(), m_enabledList() { ; }
+    asPluginManager() :
+        m_hub( NULL ), m_pluginId( -1 ), m_groupId( -1 ),
+        m_cblist(), m_enlist(), m_toolDataList() { ; }
 
     int priority() { return 100; }
 
@@ -60,6 +64,8 @@ public slots:
 
 private:
 
+    void checkOptions(const PluginImageSettings &options, int layer);
+
     QDir                    *m_dir;
 
     ConfigurationMapper     *m_config;
@@ -67,9 +73,9 @@ private:
     PluginHub               *m_hub;
     int                     m_pluginId;
     int                     m_groupId;
-    QList<QCheckBox*>       m_cblist;
-    QHash<QString,int>              m_ownerList;
-    QHash<QString,QList<int>*>      m_enabledList;
+    QHash<QString, QCheckBox*> m_cblist;
+    QHash<QString, QLabel*> m_enlist;
+    QList<ToolData*>        m_toolDataList;
 
     WebInfos                *m_webInfos;
 

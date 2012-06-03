@@ -14,6 +14,8 @@
 #include <QList>
 #include <QHash>
 
+#include <QTimer>
+
 #include <PluginHub.h>
 #include <PluginImageSettings.h>
 #include <PluginOptionList.h>
@@ -64,7 +66,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     qDebug() << "asPluginManager::toolWidgetCreated";
 
     QWidget *contents = uiWidget->findChild<QWidget*>("contents");
-    QVBoxLayout *layout = (QVBoxLayout*)contents->layout();
+    QGridLayout *layout = (QGridLayout*)contents->layout();
 
     int height = 0;
 
@@ -79,21 +81,32 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     for (int i=0; i<entries.length(); i++) {
         QString name = entries[i];
         name.remove(QRegExp("\\.afplugin(\\.off)*$"));
-        if ((m_config->getString(name,NULL)) == NULL) {
+        QString internalName = m_config->getString(name,NULL);
+        if (internalName == NULL) {
+            internalName = name;
             m_config->setString(name,"");
         }
         QCheckBox *c = new QCheckBox(name, contents);
+        c->setFocusPolicy(Qt::NoFocus);
+        QLabel *cc = new QLabel("not loaded");
         if (entries[i].endsWith("afplugin")) {
             c->setChecked(true);
-            c->setStyleSheet("QCheckBox { font-weight: bold; }");
+            c->setStyleSheet("QCheckBox { font-weight: bold; };");
+            cc->setText("no ToolData");
         }
-        layout->addWidget(c, 0, Qt::AlignLeft);
+        layout->addWidget(c, i, 0, Qt::AlignLeft);
+        layout->addWidget(cc, i, 1, Qt::AlignLeft);
+        layout->setRowStretch(i,0);
         connect(c, SIGNAL( clicked() ), SLOT( handleClick() ) );
         height += c->height();
-        m_cblist.append(c);
+        m_cblist.insert(internalName, c);
+        m_enlist.insert(internalName, cc);
+        c->setProperty("internalName", QVariant(internalName));
+        layout->setRowStretch(i+1,1);
     }
-    layout->addStretch(1);
-    uiWidget->setMinimumSize(100, min(height, 400));
+    layout->setColumnStretch(0,1);
+    layout->setColumnStretch(1,0);
+    uiWidget->setMinimumSize(100, min(height, m_config->toolBoxHeight()));
 
     connect( m_hub,
                   SIGNAL( hotnessChanged( const PluginImageSettings & ) ),
@@ -164,20 +177,59 @@ bool asPluginManager::finish() {
 
 void asPluginManager::handleHotnessChanged( const PluginImageSettings &options ) {
 
-    // qDebug() << "asPluginManager::handleHotnessChanged";
+    qDebug() << "asPluginManager::handleHotnessChanged #toolList =" << m_toolDataList.size();
 
     // ask the plugins for their ToolData if not done already
-    if (m_ownerList.isEmpty()) {
-        for (int i=0; i<m_cblist.length(); i++) {
-            QString name = (m_cblist[i])->text();
+    if (m_toolDataList.isEmpty()) {
+        QHashIterator<QString, QCheckBox*> i(m_cblist);
+        while (i.hasNext()) {
+            QCheckBox *c = i.next().value();
             // get their internal names from the config file, use directory name as default
-            QString dataName = QString("%1:ToolData").arg(m_config->getString(name,name));
+            QString dataName = QString("%1:ToolData").arg(c->property("internalName").toString());
             qDebug() << "asPluginManager: start PluginData" << dataName;
             m_hub->startPluginData(dataName);
         }
+    } else {
+        for (int layer = 0; layer<options.count(); layer++) {
+            checkOptions(options, layer);
+        }
     }
+}
 
-    Q_UNUSED(options);
+void asPluginManager::checkOptions(const PluginImageSettings &options, int layer) {
+    if (options.options(layer)) {
+        qDebug() << "asPluginManager: checking in layer" << layer;
+        for (int i=0; i<m_toolDataList.size(); i++) {
+            int ownerId = m_toolDataList[i]->ownerId;
+            QString owner = m_toolDataList[i]->owner;
+            qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId;
+            QLabel *c = m_enlist.find(owner).value();
+            c->setText("no optionId");
+            for (int j=0; j<m_toolDataList[i]->enabledIds.size(); j++) {
+                c->setText("disabled");
+                c->setStyleSheet("QLabel { font-weight: bold; }");
+                qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId << "option =" << m_toolDataList[i]->enabledIds.at(j);
+                bool ok;
+                bool enabled = options.options(0)->getBool(m_toolDataList[i]->enabledIds.at(j), ownerId, ok);
+                if (ok) {
+                    // qDebug() << "asPluginManager: ok";
+                    if (c) {
+                        qDebug() << "asPluginManager:" << owner << "enabled =" << enabled;
+                        if (enabled) {
+                            c->setText("enabled");
+                            c->setStyleSheet("QLabel { font-weight: bold; }");
+                            break;
+                        }
+                    }
+                } else {
+                    c->setText("wrong optionId?");
+                    c->setStyleSheet("QLabel { font-weight: normal; }");
+
+                }
+            }
+            c->update();
+        }
+    }
 }
 
 void asPluginManager::handleSettingsChanged( const PluginImageSettings &options,  const PluginImageSettings &changed, int layer ) {
@@ -185,23 +237,26 @@ void asPluginManager::handleSettingsChanged( const PluginImageSettings &options,
     // qDebug() << "asPluginManager::handleSettingsChanged";
 
     Q_UNUSED(changed);
-    Q_UNUSED(layer);
 
-    if (options.options(layer) != NULL) {
-    }
+    checkOptions(options, layer);
 
 }
 
 void asPluginManager::handleDataComplete(const QString &dataName, const PluginData *data) {
 
-    qDebug() << "asPluginManager::handleDataComplete";
+    qDebug() << "asPluginManager::handleDataComplete" << data;
 
     if (dataName.endsWith(":ToolData")) {
-        const ToolData *toolData = dynamic_cast<const ToolData*>(data);
+        const ToolData *toolData = (const ToolData*)(data);
         if (toolData) {
-            QStringList naming = dataName.split(":");
-            m_ownerList.insert(naming[0], toolData->ownerId);
-            qDebug() << "asPluginManager: data complete" << dataName << "OwnerId =" << toolData->ownerId;
+            if (toolData->version >= 1) {
+                ToolData *ourToolData = new ToolData(m_hub);
+                *ourToolData = *toolData;
+                m_toolDataList.append(ourToolData);
+                qDebug() << "asPluginManager: data complete" << dataName << "OwnerId =" << ourToolData->ownerId;
+            } else {
+                qDebug() << "asPluginManager: old ToolData version:" << toolData->version << "for" << dataName;
+            }
         } else {
             qDebug() << "asPluginManager: data complete" << dataName << "got NULL as data.";
         }
@@ -229,7 +284,6 @@ PluginDependency *asPluginManager::createDependency(const QString &depName) {
             toolData->group = group();
             toolData->ownerId = pluginId();
             toolData->groupId = groupId();
-            toolData->addEnabledId(0);
             qDebug() << "asPluginManager: createDependency ToolData" << toolData;
             return toolData;
         }

@@ -11,6 +11,9 @@
 #include "PluginImageSettings.h"
 #include "PluginOptionList.h"
 
+#define ASPM_CHECK_FOR_UPDATES "ASPM_CHECK_FOR_UPDATES"
+#define ASPM_TOOLBOX_HEIGHT "ASPM_TOOLBOX_HEIGHT"
+
 class ConfigurationMapper : public QObject {
         Q_OBJECT
 
@@ -27,6 +30,8 @@ class ConfigurationMapper : public QObject {
         bool isPluginEnabled(QString name, PluginOptionList *options, PluginHub *hub);
 
         bool checkForUpdates();
+
+        int toolBoxHeight();
 
 private:
         ConfigFile *m_cf;
