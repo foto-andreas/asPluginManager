@@ -11,6 +11,8 @@
 
 #include "ConfigFile.h"
 
+#define ASPM_CHECK_FOR_UPDATES "ASPM_CHECK_FOR_UPDATES"
+
 ConfigurationMapper::ConfigurationMapper(QString fileName) {
     m_cf = new ConfigFile(fileName);
     m_cf->autoWrite(true);
@@ -55,4 +57,8 @@ bool ConfigurationMapper::isPluginEnabled(QString name, PluginOptionList *option
         }
     }
     return false;
+}
+
+bool ConfigurationMapper::checkForUpdates() {
+    return getBool(ASPM_CHECK_FOR_UPDATES, true);
 }

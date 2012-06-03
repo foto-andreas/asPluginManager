@@ -26,6 +26,8 @@ class ConfigurationMapper : public QObject {
 
         bool isPluginEnabled(QString name, PluginOptionList *options, PluginHub *hub);
 
+        bool checkForUpdates();
+
 private:
         ConfigFile *m_cf;
 

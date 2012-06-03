@@ -18,6 +18,8 @@
 #include <PluginDependency.h>
 #include <PluginImageSettings.h>
 
+#include "WebInfos.h"
+
 #include "ConfigurationMapper.h"
 
 class asPluginManager : public QObject, public B5Plugin
@@ -26,12 +28,16 @@ class asPluginManager : public QObject, public B5Plugin
 
 public:
     asPluginManager() : m_hub( NULL ), m_pluginId( -1 ), m_groupId( -1 ), m_cblist(), m_ownerList(), m_enabledList() { ; }
+
     int priority() { return 100; }
+
     QString name() { return QString("asPluginManager"); }
     QString group() { return QString("asPluginManager"); }
-    bool registerFilters() {return true; }
-    bool registerOptions() {return true; }
-    bool finish() {return true; }
+
+    bool registerFilters();
+    bool registerOptions();
+    bool finish();
+
     int groupId() const { return m_groupId; }
     int pluginId() const { return m_pluginId; }
 
@@ -44,12 +50,13 @@ public:
     QList<QWidget*> toolWidgets();
 
 public slots:
-    void handleToggle(bool enable) ;
+    void handleClick() ;
     void handleHotnessChanged( const PluginImageSettings &options );
     void handleSettingsChanged(const PluginImageSettings &options, const PluginImageSettings &changed, int layer);
 
     void handleDataComplete(const QString &dataName, const PluginData *data);
     void handleDataInvalid(const QString &dataName);
+    void webInfosReady();
 
 private:
 
@@ -63,5 +70,7 @@ private:
     QList<QCheckBox*>       m_cblist;
     QHash<QString,int>              m_ownerList;
     QHash<QString,QList<int>*>      m_enabledList;
+
+    WebInfos                *m_webInfos;
 
 };

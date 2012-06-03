@@ -11,7 +11,7 @@ include ( ../PluginDefaults/PluginDefaults.pri )
 
 # Include extra Qt libraries for the web views etc. if you need them
 # QT += webkit
-# QT += network
+QT += network
 
 # our header files
 HEADERS += \ 
