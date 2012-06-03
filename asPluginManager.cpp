@@ -164,7 +164,7 @@ bool asPluginManager::finish() {
 
 void asPluginManager::handleHotnessChanged( const PluginImageSettings &options ) {
 
-    qDebug() << "asPluginManager::handleHotnessChanged";
+    // qDebug() << "asPluginManager::handleHotnessChanged";
 
     // ask the plugins for their ToolData if not done already
     if (m_ownerList.isEmpty()) {
@@ -182,7 +182,7 @@ void asPluginManager::handleHotnessChanged( const PluginImageSettings &options )
 
 void asPluginManager::handleSettingsChanged( const PluginImageSettings &options,  const PluginImageSettings &changed, int layer ) {
 
-    qDebug() << "asPluginManager::handleSettingsChanged";
+    // qDebug() << "asPluginManager::handleSettingsChanged";
 
     Q_UNUSED(changed);
     Q_UNUSED(layer);
