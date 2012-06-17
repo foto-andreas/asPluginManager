@@ -88,11 +88,11 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         }
         QCheckBox *c = new QCheckBox(name, contents);
         c->setFocusPolicy(Qt::NoFocus);
-        QLabel *cc = new QLabel("not loaded");
+        QLabel *cc = new QLabel(tr("not loaded"));
         if (entries[i].endsWith("afplugin")) {
             c->setChecked(true);
             c->setStyleSheet("QCheckBox { font-weight: bold; };");
-            cc->setText("no ToolData");
+            cc->setText(tr("no ToolData"));
         }
         layout->addWidget(c, i, 0, Qt::AlignLeft);
         layout->addWidget(cc, i, 1, Qt::AlignLeft);
@@ -204,9 +204,9 @@ void asPluginManager::checkOptions(const PluginImageSettings &options, int layer
             QString owner = m_toolDataList[i]->owner;
             qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId;
             QLabel *c = m_enlist.find(owner).value();
-            c->setText("no optionId");
+            c->setText(tr("no optionId"));
             for (int j=0; j<m_toolDataList[i]->enabledIds.size(); j++) {
-                c->setText("disabled");
+                c->setText(tr("disabled"));
                 c->setStyleSheet("QLabel { font-weight: bold; }");
                 qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId << "option =" << m_toolDataList[i]->enabledIds.at(j);
                 bool ok;
@@ -216,13 +216,13 @@ void asPluginManager::checkOptions(const PluginImageSettings &options, int layer
                     if (c) {
                         qDebug() << "asPluginManager:" << owner << "enabled =" << enabled;
                         if (enabled) {
-                            c->setText("enabled");
+                            c->setText(tr("enabled"));
                             c->setStyleSheet("QLabel { font-weight: bold; }");
                             break;
                         }
                     }
                 } else {
-                    c->setText("wrong optionId?");
+                    c->setText(tr("wrong optionId?"));
                     c->setStyleSheet("QLabel { font-weight: normal; }");
 
                 }
@@ -253,6 +253,8 @@ void asPluginManager::handleDataComplete(const QString &dataName, const PluginDa
                 ToolData *ourToolData = new ToolData(m_hub);
                 *ourToolData = *toolData;
                 m_toolDataList.append(ourToolData);
+                QLabel *c = m_enlist.find(ourToolData->owner).value();
+                c->setText(tr("waiting for HC"));
                 qDebug() << "asPluginManager: data complete" << dataName << "OwnerId =" << ourToolData->ownerId;
             } else {
                 qDebug() << "asPluginManager: old ToolData version:" << toolData->version << "for" << dataName;

@@ -5,7 +5,7 @@
 
 # what we build here (plugin name and version)
 TARGET = asPluginManager
-VERSION = 1.0.3
+VERSION = 1.0.4
 
 include ( ../PluginDefaults/PluginDefaults.pri )
 
@@ -44,6 +44,14 @@ OTHER_FILES += \
 FORMS += \ 
     asPluginManager.ui
 
+# translations
+TRANSLATIONS += locale/asPluginManager_en.ts 
+TRANSLATIONS += locale/asPluginManager_de.ts
+TRANSLATIONS += locale/asPluginManager_nl.ts
+TRANSLATIONS += locale/asPluginManager_fr.ts
+TRANSLATIONS += locale/asPluginManager_it.ts
+TRANSLATIONS += locale/asPluginManager_ja.ts
+
 unix {
 !mac {
 # private extra targets here on my linux box
@@ -53,17 +61,15 @@ QMAKE_POST_LINK += "echo 'extras...'"
 QMAKE_POST_LINK += "; doxygen"
 
 # locale files
-QMAKE_POST_LINK += "; lrelease xlate.pro"
+QMAKE_POST_LINK += "; lrelease $${TARGET}.pro"
 
 # strip the lib
 QMAKE_POST_LINK += "; strip 'lib$${TARGET}.so.$${VERSION}'"
 
 # we pack our plugin - I hate PZ
-QMAKE_POST_LINK += "; ./afz '$$TARGET' '$$VERSION'"
+QMAKE_POST_LINK += "; ./afz '$${TARGET}' '$${VERSION}'"
 }
 }
-
-
 
 
 
