@@ -1,5 +1,4 @@
-#ifndef CONFIGURATIONMAPPER_H
-#define CONFIGURATIONMAPPER_H
+#pragma once
 
 #include <QString>
 #include <QObject>
@@ -38,5 +37,3 @@ private:
 
 
 };
-
-#endif // CONFIGURATIONMAPPER_H

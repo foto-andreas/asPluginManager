@@ -5,7 +5,10 @@
 
 # what we build here (plugin name and version)
 TARGET = asPluginManager
-VERSION = 1.0.4
+VERSION = 1.0.5
+IDENTIFIER = de.schrell.asPluginManager
+AUTHOR = Andreas Schrell
+SITE = http://fotos.schrell.de
 
 include ( ../PluginDefaults/PluginDefaults.pri )
 
@@ -20,7 +23,8 @@ HEADERS += \
     ../PluginTools/WebInfos.h \
     ../PluginTools/WebContents.h \
     ../PluginTools/ConfigFile.h \
-    ../PluginTools/ToolData.h
+    ../PluginTools/ToolData.h \
+    ../PluginTools/TargetVersion.h
 
 # our source files
 SOURCES += \ 
@@ -67,19 +71,7 @@ QMAKE_POST_LINK += "; lrelease $${TARGET}.pro"
 QMAKE_POST_LINK += "; strip 'lib$${TARGET}.so.$${VERSION}'"
 
 # we pack our plugin - I hate PZ
-QMAKE_POST_LINK += "; ./afz '$${TARGET}' '$${VERSION}'"
+QMAKE_POST_LINK += "; ../PluginDefaults/afz '$$TARGET' '$$VERSION' '$$IDENTIFIER' '$$AUTHOR' '$$SITE' "
 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
