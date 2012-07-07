@@ -16,6 +16,9 @@ include ( ../PluginDefaults/PluginDefaults.pri )
 # QT += webkit
 QT += network
 
+# Xml processing
+QT += xml
+
 # our header files
 HEADERS += \ 
     asPluginManager.h \

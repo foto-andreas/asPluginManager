@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QString>
 #include <QMessageBox>
+#include <QPushButton>
 
 #include <QFile>
 #include <QDir>
@@ -15,6 +16,8 @@
 #include <QHash>
 
 #include <QTimer>
+
+#include <QDomDocument>
 
 #include <PluginHub.h>
 #include <PluginImageSettings.h>
@@ -46,17 +49,19 @@ bool asPluginManager::init(PluginHub *hub, int id, int groupId, const QString&) 
         return false;
     }
 
+    return true;
+}
+
+void asPluginManager::checkForUpdates(QString id, int sdkVersion, QString installedVersion) {
     // check for updates
     if (m_config->checkForUpdates()) {
-        m_webInfos = new WebInfos("de.schrell.asPluginManager", "8");
-        connect(m_webInfos,
+        WebInfos *webInfos = new WebInfos(id, QString("%1").arg(sdkVersion), installedVersion);
+        connect(webInfos,
                 SIGNAL(ready()),
                 SLOT(webInfosReady()));
-
-        m_webInfos->fetch();
+        qDebug() << "asPluginManager: fetching update infos for" << id;
+        webInfos->fetch();
     }
-
-    return true;
 }
 
 #define min(a,b) (a>b ? b : a)
@@ -80,27 +85,65 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     QStringList entries = m_dir->entryList();
     for (int i=0; i<entries.length(); i++) {
         QString name = entries[i];
+
+        QString infoName = name;
+        QString infoId = name;
+        QString infoVersion = "";
+        int infoMajor = 0;
+        int infoMinor = 0;
+        int infoFix = 0;
+        int infoSDK = 0;
+        QString infoFile = dir + "/" + name + "/" + "Info.afpxml";
+        try {
+            QDomDocument infoDoc;
+            infoDoc.setContent(new QFile(infoFile));
+            QDomElement propertyScribe = infoDoc.documentElement();
+            QDomElement pluginFileData = propertyScribe.elementsByTagName("PluginFileData").at(0).toElement();
+            infoName = pluginFileData.attribute("name");
+            infoId = pluginFileData.attribute("identifier");
+            infoMajor = pluginFileData.attribute("majorVersion").toInt();
+            infoMinor = pluginFileData.attribute("minorVersion").toInt();
+            infoFix = pluginFileData.attribute("bugfixVersion").toInt();
+            infoSDK = pluginFileData.attribute("sdkVersion").toInt();
+            infoVersion = QString("%1.%2.%3").arg(infoMajor).arg(infoMinor).arg(infoFix);
+            qDebug() << "asPluginManager: found plugin dir" << name
+                     << "with name" << infoName << "with id" << infoId
+                     << "in version" << infoVersion << "for sdk version" << infoSDK;
+        } catch (exception e) {
+            qDebug() << "asPluginManager:" << infoFile << "has unknown structure.";
+        }
+
         name.remove(QRegExp("\\.afplugin(\\.off)*$"));
         QString internalName = m_config->getString(name,NULL);
         if (internalName == NULL) {
-            internalName = name;
-            m_config->setString(name,"");
+            internalName = infoName;
+            m_config->setString(name,infoName);
         }
         QCheckBox *c = new QCheckBox(name, contents);
+        m_cblist.insert(internalName, c);
         c->setFocusPolicy(Qt::NoFocus);
         QLabel *cc = new QLabel(tr("not loaded"));
+        m_enlist.insert(internalName, cc);
+        QAbstractButton *cv = new QPushButton(infoVersion);
+        cv->setFixedHeight(16);
+        cv->setFixedWidth(60);
+        cv->setEnabled(false);
+        m_vlist.insert(infoId, cv);
         if (entries[i].endsWith("afplugin")) {
+            if (m_config->checkForUpdates()) {
+                this->checkForUpdates(infoId, infoSDK, infoVersion);
+            }
             c->setChecked(true);
             c->setStyleSheet("QCheckBox { font-weight: bold; };");
             cc->setText(tr("no ToolData"));
         }
         layout->addWidget(c, i, 0, Qt::AlignLeft);
-        layout->addWidget(cc, i, 1, Qt::AlignLeft);
+        layout->addWidget(cv, i, 1, Qt::AlignLeft);
+        layout->setHorizontalSpacing(5);
+        layout->addWidget(cc, i, 2, Qt::AlignLeft);
         layout->setRowStretch(i,0);
         connect(c, SIGNAL( clicked() ), SLOT( handleClick() ) );
         height += c->height();
-        m_cblist.insert(internalName, c);
-        m_enlist.insert(internalName, cc);
         c->setProperty("internalName", QVariant(internalName));
         layout->setRowStretch(i+1,1);
     }
@@ -120,35 +163,30 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
 
 void asPluginManager::handleClick() {
 
-    qDebug() << "asPluginManager::handleClick";
-
     QCheckBox *c = (QCheckBox*)QObject::sender();
     bool enable = c->isChecked();
     QString who = c->text();
     if (enable) {
         if (!QFile::rename(m_dir->absoluteFilePath(who) + ".afplugin.off",
                            m_dir->absoluteFilePath(who) + ".afplugin")) c->setChecked(false);
+        qDebug() << "asPluginManager: enabled plugin" << who << "for next restart.";
     } else {
         if (!QFile::rename(m_dir->absoluteFilePath(who) + ".afplugin",
                       m_dir->absoluteFilePath(who) + ".afplugin.off")) c->setChecked(true);
         if (who.startsWith("asPluginManager")) {
             QMessageBox::information(NULL, "asPluginManager", tr("You disabled asPluginManager itself."));
         }
+        qDebug() << "asPluginManager: disabled plugin" << who << "for next restart.";
     }
 
-    qDebug() << "Toggled Plugin " << who << ":" << (c->isChecked() ? "on" : "off");
 }
 
 QList<QString> asPluginManager::toolFiles() {
-
-    qDebug() << "asPluginManager::toolFiles";
 
     return QList<QString>();
 }
 
 QList<QWidget*> asPluginManager::toolWidgets() {
-
-    qDebug() << "asPluginManager::toolWidgets";
 
     QList<QWidget*> lstWidgets;
     return lstWidgets;
@@ -156,21 +194,15 @@ QList<QWidget*> asPluginManager::toolWidgets() {
 
 bool asPluginManager::registerFilters() {
 
-    qDebug() << "asPluginManager::registerFilters";
-
     return true;
 }
 
 bool asPluginManager::registerOptions() {
 
-    qDebug() << "asPluginManager::registerOptions";
-
     return true;
 }
 
 bool asPluginManager::finish() {
-
-    qDebug() << "asPluginManager::finish";
 
     return true;
 }
@@ -234,10 +266,7 @@ void asPluginManager::checkOptions(const PluginImageSettings &options, int layer
 
 void asPluginManager::handleSettingsChanged( const PluginImageSettings &options,  const PluginImageSettings &changed, int layer ) {
 
-    // qDebug() << "asPluginManager::handleSettingsChanged";
-
     Q_UNUSED(changed);
-
     checkOptions(options, layer);
 
 }
@@ -299,16 +328,33 @@ PluginDependency *asPluginManager::createDependency(const QString &depName) {
 
 void asPluginManager::webInfosReady() {
 
-    qDebug() << "asPluginManager::webInfosReady" << m_webInfos->identifier() << m_webInfos->version();
+    WebInfos *webInfos = (WebInfos*)(sender());
 
-    if (m_webInfos->isWebNewer()) {
+    qDebug() << "asPluginManager::webInfosReady" << webInfos->identifier()
+             << "web:" << webInfos->webVersion() << "installed:" << webInfos->installedVersion();
+    QAbstractButton *c = m_vlist.find(webInfos->identifier()).value();
+    if (c!=NULL) {
+        c->setStyleSheet("QAbstractButton { color : green; }");
+    }
+    if (webInfos->isWebNewer()) {
         QString text = QString(tr("There is a newer version of %1 available. "
                                "It is version %2. You are running %3. "
                                "You can download it under the following url: <a href='%4'>%4</a>"))
-                        .arg(m_webInfos->name(), m_webInfos->version(), TARGET_VERSION_STRING, m_webInfos->link());
-        QMessageBox::information(NULL, m_webInfos->name(), text);
+                       .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
+        if (c!=NULL) {
+            c->setStyleSheet("QAbstractButton { color : red; }");
+            c->setText(tr("update"));
+            c->setToolTip(text);
+            c->setEnabled(true);
+            connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
+        } else {
+            QMessageBox::information(NULL, webInfos->name(), text);
+        }
     }
-    delete m_webInfos;
-    m_webInfos = NULL;
+    delete webInfos;
 }
 
+void asPluginManager::handleClickForUpdate() {
+    QAbstractButton *button = (QAbstractButton*) sender();
+    QMessageBox::information(NULL, tr("Update-Info from asPluginManager"), button->toolTip());
+}

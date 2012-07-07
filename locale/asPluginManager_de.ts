@@ -51,7 +51,7 @@
     <message>
         <location filename="../asPluginManager.cpp" line="305"/>
         <source>There is a newer version of %1 available. It is version %2. You are running %3. You can download it under the following url: &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt;</source>
-        <translation>Es ist eine neuere Version von %1 verfügbar. Es handelt sich uim Version %2. Sie benutzen %3. Sie können die neue Version unter folgender URL &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt; herunterladen</translation>
+        <translation>Es ist eine neuere Version von %1 verfügbar. Es handelt sich um Version %2. Sie benutzen %3. Sie können die neue Version unter folgender URL &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt; herunterladen</translation>
     </message>
 </context>
 <context>

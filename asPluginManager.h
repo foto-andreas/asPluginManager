@@ -31,7 +31,7 @@ class asPluginManager : public QObject, public B5Plugin
 public:
     asPluginManager() :
         m_hub( NULL ), m_pluginId( -1 ), m_groupId( -1 ),
-        m_cblist(), m_enlist(), m_toolDataList() { ; }
+        m_cblist(), m_enlist(), m_vlist(), m_toolDataList() { ; }
 
     int priority() { return 100; }
 
@@ -55,6 +55,7 @@ public:
 
 public slots:
     void handleClick() ;
+    void handleClickForUpdate() ;
     void handleHotnessChanged( const PluginImageSettings &options );
     void handleSettingsChanged(const PluginImageSettings &options, const PluginImageSettings &changed, int layer);
 
@@ -64,6 +65,7 @@ public slots:
 
 private:
 
+    void checkForUpdates(QString id, int sdkVersion, QString insalledVersion);
     void checkOptions(const PluginImageSettings &options, int layer);
 
     QDir                    *m_dir;
@@ -75,6 +77,7 @@ private:
     int                     m_groupId;
     QHash<QString, QCheckBox*> m_cblist;
     QHash<QString, QLabel*> m_enlist;
+    QHash<QString, QAbstractButton*> m_vlist;
     QList<ToolData*>        m_toolDataList;
 
     WebInfos                *m_webInfos;
