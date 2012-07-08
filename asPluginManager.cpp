@@ -126,11 +126,13 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         m_cblist.insert(internalName, c);
         c->setFocusPolicy(Qt::NoFocus);
         QLabel *cc = new QLabel(tr("not loaded"));
+        cc->setToolTip(tr("<html>This plugin is disabled or could not be loaded by AfterShotPro.</html>"));
         m_enlist.insert(internalName, cc);
         QAbstractButton *cv = new QPushButton(infoVersion);
         cv->setFixedHeight(16);
         cv->setFixedWidth(60);
         cv->setEnabled(false);
+        cv->setToolTip(tr("There is no version info available for this plugin."));
         m_vlist.insert(infoId, cv);
         if (entries[i].endsWith("afplugin")) {
             if (m_config->checkForUpdates()) {
@@ -139,6 +141,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
             c->setChecked(true);
             c->setStyleSheet("QCheckBox { font-weight: bold; };");
             cc->setText(tr("no ToolData"));
+            cc->setToolTip(tr("<html>This plugin does not support additional info for asPluginManager. If it would, it would be possible to show its enabled state.</html>"));
         }
         layout->addWidget(c, i, 0, Qt::AlignLeft);
         layout->addWidget(cv, i, 1, Qt::AlignLeft);
@@ -240,6 +243,7 @@ void asPluginManager::checkOptions(const PluginImageSettings &options, int layer
             qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId;
             QLabel *c = m_enlist.find(owner).value();
             c->setText(tr("no optionId"));
+            c->setToolTip(tr("<html>This plugin provides asPluginManager support, but has no image relevant enabled option.</html>"));
             for (int j=0; j<m_toolDataList[i]->enabledIds.size(); j++) {
                 c->setText(tr("disabled"));
                 c->setStyleSheet("QLabel { font-weight: bold; }");
@@ -287,6 +291,7 @@ void asPluginManager::handleDataComplete(const QString &dataName, const PluginDa
                 m_toolDataList.append(ourToolData);
                 QLabel *c = m_enlist.find(ourToolData->owner).value();
                 c->setText(tr("waiting for HC"));
+                c->setToolTip(tr("<html>Further information will be available after the next hotness change.</html>"));
                 qDebug() << "asPluginManager: data complete" << dataName << "OwnerId =" << ourToolData->ownerId;
             } else {
                 qDebug() << "asPluginManager: old ToolData version:" << toolData->version << "for" << dataName;
@@ -337,7 +342,8 @@ void asPluginManager::webInfosReady() {
              << "web:" << webInfos->webVersion() << "installed:" << webInfos->installedVersion();
     QAbstractButton *c = m_vlist.find(webInfos->identifier()).value();
     if (c!=NULL) {
-        c->setStyleSheet("QAbstractButton { color : green; }");
+        c->setStyleSheet("QAbstractButton { color : rgb(0, 80, 0); font-weight : bold; }");
+        c->setToolTip(tr("This plugin is installed in its newest version."));
     }
     if (webInfos->isWebNewer()) {
         QString text = QString(tr("There is a newer version of %1 available. "
@@ -345,7 +351,7 @@ void asPluginManager::webInfosReady() {
                                "You can download it under the following url: <a href='%4'>%4</a>"))
                        .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
         if (c!=NULL) {
-            c->setStyleSheet("QAbstractButton { color : red; }");
+            c->setStyleSheet("QAbstractButton { color : rgb(100, 0, 0); font-weight : bold; }");
             c->setText(tr("update"));
             c->setToolTip(text);
             c->setEnabled(true);

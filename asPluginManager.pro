@@ -5,7 +5,7 @@
 
 # what we build here (plugin name and version)
 TARGET = asPluginManager
-VERSION = 1.0.5
+VERSION = 1.0.6
 IDENTIFIER = de.schrell.asPluginManager
 AUTHOR = Andreas Schrell
 SITE = http://fotos.schrell.de
