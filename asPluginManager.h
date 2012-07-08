@@ -5,12 +5,17 @@
  * @author    Andeas Schrell
  * @version   1.0.7
  * @date      2012-07-08
+ * @warning   Like removing the plugins manually, disabling a plugin here has the following effect:
+ *            If you change settings for an image with a plugin disabled all settings of that plugin are lost for the image.
  *
  * \section intro_sec Introduction
  *
  * asPluginManager is a tool to manage your installed plugins. It can be used
  * to disable or enable a plugin by renaming its plugin folder. It displays the current
  * version and informs you about updates of your plugins on the Corel web page.
+ *
+ * If you want to register your plugin in asPluginManger please see here:
+ * http://forum.corel.com/EN/viewtopic.php?f=96&t=47074
  *
  * \section install_sec Installation
  *
@@ -26,8 +31,13 @@
  *
  * \subsection source The source code
  *
- * The source code can be obtained with the git command
- * \verbatim git clone http://schrell.de/asPluginManager.git \endverbatim
+ * The source code can be obtained with the git commands
+ *
+\verbatim
+git clone http://schrell.de/asPluginManager.git
+git clone http://schrell.de/PluginTools.git
+git clone http://schrell.de/PluginDefaults.git
+\endverbatim
  * or by browsing to the following web page
  * http://schrell.de/cgi-bin/gitweb.cgi?p=asPluginManager.git
  *
@@ -37,7 +47,6 @@
  * provided using the Paypal Donation option on the Corels plugin page, see above.
  *
  * asPluginManager is licensed under the BSD 2-clause license.
- *
  *
  * \section other Other Information
  *
