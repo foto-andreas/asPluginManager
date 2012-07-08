@@ -93,10 +93,13 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         int infoMinor = 0;
         int infoFix = 0;
         int infoSDK = 0;
-        QString infoFile = dir + "/" + name + "/" + "Info.afpxml";
+        QString infoFileName = dir + "/" + name + "/" + "Info.afpxml";
         try {
             QDomDocument infoDoc;
-            infoDoc.setContent(new QFile(infoFile));
+            QFile *infoFile = new QFile(infoFileName);
+            infoDoc.setContent(infoFile);
+            infoFile->close();
+            delete infoFile;
             QDomElement propertyScribe = infoDoc.documentElement();
             QDomElement pluginFileData = propertyScribe.elementsByTagName("PluginFileData").at(0).toElement();
             infoName = pluginFileData.attribute("name");
@@ -110,7 +113,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
                      << "with name" << infoName << "with id" << infoId
                      << "in version" << infoVersion << "for sdk version" << infoSDK;
         } catch (exception e) {
-            qDebug() << "asPluginManager:" << infoFile << "has unknown structure.";
+            qDebug() << "asPluginManager:" << infoFileName << "has unknown structure.";
         }
 
         name.remove(QRegExp("\\.afplugin(\\.off)*$"));
