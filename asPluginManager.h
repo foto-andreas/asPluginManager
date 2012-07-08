@@ -1,5 +1,55 @@
 #pragma once
 
+/** \mainpage asPluginManager - Plugin Management for AfterShot Pro
+ *
+ * @author    Andeas Schrell
+ * @version   1.0.7
+ * @date      2012-07-08
+ *
+ * \section intro_sec Introduction
+ *
+ * asPluginManager is a tool to manage your installed plugins. It can be used
+ * to disable or enable a plugin by renaming its plugin folder. It displays the current
+ * version and informs you about updates of your plugins on the Corel web page.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection binary The binary install process
+ *
+ * The normal user can download asPluginManager as a binary ASP plugin here:
+ * http://aftershotpro.com/plugins/?plug=aspluginmanager
+ * From the AfterShot Pro file menu, he/she can select "install plugin" to install
+ * the plugin.
+ *
+ * A deinstallation can be done by deleting the asPluginManager.afplugin folder from the
+ * plugins folder in the ASP user home.
+ *
+ * \subsection source The source code
+ *
+ * The source code can be obtained with the git command
+ * \verbatim git clone http://schrell.de/asPluginManager.git \endverbatim
+ * or by browsing to the following web page
+ * http://schrell.de/cgi-bin/gitweb.cgi?p=asPluginManager.git
+ *
+ * \section license License
+ *
+ * You may use asPluginManager free of charge. Small donations for coffee or beer can
+ * provided using the Paypal Donation option on the Corels plugin page, see above.
+ *
+ * asPluginManager is licensed under the BSD 2-clause license.
+ *
+ *
+ * \section other Other Information
+ *
+ * @bug    additional hotness change required to get ToolData (I see this as an ASP bug)
+ *
+ * @todo   enable/disable checkbox for the plugins who support ToolData
+ * @todo   perhaps hide plugins from the ui by manipulating their Info file
+ * @todo   select/unselect all
+ * @todo   save and reload configurations
+ *
+ */
+
 #include <QObject>
 #include <QAbstractButton>
 #include <QList>

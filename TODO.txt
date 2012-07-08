@@ -1,8 +1,0 @@
-Ideen:
-
-- Alle selektieren
-- Alle deselektieren
-- Liste mit aktueller Konfig schreiben
-- Liste mit aktueller Konfig lesen
-- Suche nach Ideen, ob man anzeigen kann, dass ein Plugin in ASP eingeschaltet ist
-- Auto Update einbauen
