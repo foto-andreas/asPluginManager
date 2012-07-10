@@ -397,23 +397,22 @@ void asPluginManager::webInfosReady() {
         if (layoutData->infoId == webInfos->identifier()) {
             QAbstractButton *c = layoutData->versionBTN;
             qDebug() << "VersionButton =" << c;
-            if (c!=NULL) {
-                c->setStyleSheet("QAbstractButton { color : rgb(0, 80, 0); font-weight : bold; }");
-                c->setToolTip(tr("<html>No newer version available.</html>"));
-            }
+            c->setStyleSheet("QAbstractButton { color : rgb(0, 80, 0); font-weight : bold; }");
+            c->setToolTip(tr("<html>No newer version available.</html>"));
             if (webInfos->isWebNewer()) {
                 QString text = QString(tr("There is a newer version of %1 available. "
                                        "It is version %2. You are running %3. "
                                        "You can download it under the following url: <a href='%4'>%4</a>"))
                                .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
-                if (c!=NULL) {
-                    c->setStyleSheet("QAbstractButton { color : rgb(100, 0, 0); font-weight : bold; }");
-                    c->setText(tr("update"));
-                    c->setToolTip(text);
-                    c->setEnabled(true);
-                    connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
-                } else {
-                    QMessageBox::information(NULL, webInfos->name(), text);
+                c->setStyleSheet("QAbstractButton { color : rgb(100, 0, 0); font-weight : bold; }");
+                c->setText(tr("update"));
+                c->setToolTip(text);
+                c->setEnabled(true);
+                connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
+            } else {
+                if (WebInfos::formatVersion(webInfos->installedVersion()) > WebInfos::formatVersion(webInfos->webVersion())) {
+                    c->setStyleSheet("QAbstractButton { color : rgb(20, 0, 100); font-weight : bold; }");
+                    c->setToolTip(tr("<html>Newer version installed locally.</html>"));
                 }
             }
         }

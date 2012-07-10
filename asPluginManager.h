@@ -3,7 +3,7 @@
 /** \mainpage asPluginManager - Plugin Management for AfterShot Pro
  *
  * @author    Andeas Schrell
- * @version   1.0.8
+ * @version   1.0.9
  * @date      2012-07-10
  * @warning   Like removing the plugins manually, disabling a plugin here has the following effect:
  *            If you change settings for an image with a plugin disabled all settings of that plugin are lost for the image.

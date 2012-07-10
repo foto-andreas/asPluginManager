@@ -49,12 +49,22 @@
         <translation>Keine Update-Information verfügbar.</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="321"/>
+        <location filename="../asPluginManager.cpp" line="333"/>
         <source>enable</source>
         <translation>ein</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="390"/>
+        <location filename="../asPluginManager.cpp" line="345"/>
+        <source>wait for HC</source>
+        <translation>erwarte Selektion</translation>
+    </message>
+    <message>
+        <location filename="../asPluginManager.cpp" line="346"/>
+        <source>&lt;html&gt;Info available after next image selection.&lt;/html&gt;</source>
+        <translation>&lt;html&gt;Information erst nach der nächsten Bild-Selektion verfügbar.&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../asPluginManager.cpp" line="401"/>
         <source>&lt;html&gt;No newer version available.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Keine neuere Version verfügbar.&lt;/html&gt;</translation>
     </message>
@@ -64,17 +74,22 @@
         <translation>Sie haben den asPluginManager ausgeschaltet.</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="393"/>
+        <location filename="../asPluginManager.cpp" line="403"/>
         <source>There is a newer version of %1 available. It is version %2. You are running %3. You can download it under the following url: &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt;</source>
         <translation>Es ist eine neuere Version von %1 verfügbar. Es handelt sich um Version %2. Sie benutzen %3. Sie können die neue Version unter folgender URL &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt; herunterladen</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="399"/>
+        <location filename="../asPluginManager.cpp" line="408"/>
         <source>update</source>
         <translation>update</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="414"/>
+        <location filename="../asPluginManager.cpp" line="415"/>
+        <source>&lt;html&gt;Newer version installed locally.&lt;/html&gt;</source>
+        <translation>&lt;html&gt;Neuere Version lokal installiert.&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../asPluginManager.cpp" line="425"/>
         <source>Update-Info from asPluginManager</source>
         <translation>Update-Informationen von asPluginManager</translation>
     </message>
