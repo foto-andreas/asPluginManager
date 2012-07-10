@@ -56,14 +56,7 @@
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">QWidget {
-	background-color: gray;
-	color: black;
-}
-
-QCheckBox {
-	color: black;
-}</string>
+       <string notr="true">QWidget { background: rgb(60,60,60); }</string>
       </property>
       <layout class="QGridLayout" name="gridLayout" columnstretch="0">
        <property name="margin">

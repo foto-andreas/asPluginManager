@@ -8,7 +8,9 @@
 #include <QString>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QToolButton>
 #include <QHBoxLayout>
+#include <QWidget>
 
 #include <QFile>
 #include <QDir>
@@ -143,7 +145,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         label->setToolTip(tr("<html>This plugin is disabled or could not load.</html>"));
         layoutData->infoLabel = label;
 
-        QCheckBox *c = new QCheckBox(name, contents);
+        QCheckBox *c = new QCheckBox(name, 0);
         c->setFocusPolicy(Qt::NoFocus);
         c->setToolTip(QString("%1\ninternal name=%2").arg(name).arg(internalName));
         layoutData->loadedCB = c;
@@ -155,7 +157,9 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
             c->setStyleSheet("QCheckBox { font-weight: bold; };");
         }
 
-        QAbstractButton *cv = new QPushButton(infoVersion);
+        QPushButton *cv = new QPushButton(infoVersion);
+//        cv->setFlat(false);
+        cv->setStyleSheet("QWidget { background: rgb(40,40,40); }");
         cv->setFocusPolicy(Qt::NoFocus);
         cv->setFixedHeight(16);
         cv->setFixedWidth(60);
@@ -397,21 +401,21 @@ void asPluginManager::webInfosReady() {
         if (layoutData->infoId == webInfos->identifier()) {
             QAbstractButton *c = layoutData->versionBTN;
             qDebug() << "VersionButton =" << c;
-            c->setStyleSheet("QAbstractButton { color : rgb(0, 80, 0); font-weight : bold; }");
+            c->setStyleSheet("QAbstractButton { color : rgb(0, 120, 0); font-weight : bold; background : rgb(40,40,40); }");
             c->setToolTip(tr("<html>No newer version available.</html>"));
             if (webInfos->isWebNewer()) {
                 QString text = QString(tr("There is a newer version of %1 available. "
                                        "It is version %2. You are running %3. "
                                        "You can download it under the following url: <a href='%4'>%4</a>"))
                                .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
-                c->setStyleSheet("QAbstractButton { color : rgb(100, 0, 0); font-weight : bold; }");
+                c->setStyleSheet("QAbstractButton { color : rgb(150, 0, 0); font-weight : bold; background : rgb(40,40,40); }");
                 c->setText(tr("update"));
-                c->setToolTip(text);
+                c->setToolTip(tr("<html>Click to see the update link.</html>"));
                 c->setEnabled(true);
                 connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
             } else {
                 if (WebInfos::formatVersion(webInfos->installedVersion()) > WebInfos::formatVersion(webInfos->webVersion())) {
-                    c->setStyleSheet("QAbstractButton { color : rgb(20, 0, 100); font-weight : bold; }");
+                    c->setStyleSheet("QAbstractButton { color : rgb(150, 150, 0); font-weight : bold; background : rgb(40,40,40); }");
                     c->setToolTip(tr("<html>Newer version installed locally.</html>"));
                 }
             }

@@ -52,6 +52,8 @@ git clone http://schrell.de/PluginDefaults.git
  *
  * @bug    additional hotness change required to get ToolData (I see this as an ASP bug)
  *
+ * @todo   shorter names in config file to get a smaller ui
+ * @todo   dark layout
  * @todo   perhaps hide plugins from the ui by manipulating their Info file
  * @todo   select/unselect all
  * @todo   save and reload configurations
