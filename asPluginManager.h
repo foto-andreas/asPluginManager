@@ -83,6 +83,24 @@ git clone http://schrell.de/PluginDefaults.git
 
 #include "ConfigurationMapper.h"
 
+class LayoutData {
+public:
+    QCheckBox *loadedCB;
+    QAbstractButton * versionBTN;
+    QHash<int, QCheckBox*> enabledCBHash;
+    QGridLayout *boxLayout;
+    QWidget *boxWidget;
+    ToolData *toolData;
+    QString name;
+    QString internalName;
+    QString infoId;
+    QLabel *infoLabel;
+    bool loaded;
+    LayoutData() : loadedCB(0), versionBTN(0), enabledCBHash(),
+        boxLayout(), boxWidget(), toolData(0), name(""), internalName(""), infoId(""), infoLabel(),
+        loaded(false) {}
+};
+
 class asPluginManager : public QObject, public B5Plugin
 {
     Q_OBJECT
@@ -90,7 +108,7 @@ class asPluginManager : public QObject, public B5Plugin
 public:
     asPluginManager() :
         m_hub( NULL ), m_pluginId( -1 ), m_groupId( -1 ),
-        m_cblist(), m_enlist(), m_vlist(), m_toolDataList() { ; }
+        m_layoutData() { ; }
 
     int priority() { return 100; }
 
@@ -122,6 +140,8 @@ public slots:
     void handleDataInvalid(const QString &dataName);
     void webInfosReady();
 
+    void enablerClicked();
+
 private:
 
     void checkForUpdates(QString id, int sdkVersion, QString insalledVersion);
@@ -132,12 +152,11 @@ private:
     ConfigurationMapper     *m_config;
 
     PluginHub               *m_hub;
+
     int                     m_pluginId;
     int                     m_groupId;
-    QHash<QString, QCheckBox*> m_cblist;
-    QHash<QString, QLabel*> m_enlist;
-    QHash<QString, QAbstractButton*> m_vlist;
-    QList<ToolData*>        m_toolDataList;
+
+    QHash<QString, LayoutData*> m_layoutData;
 
     WebInfos                *m_webInfos;
 

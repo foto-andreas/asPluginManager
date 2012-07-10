@@ -8,6 +8,7 @@
 #include <QString>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QHBoxLayout>
 
 #include <QFile>
 #include <QDir>
@@ -73,6 +74,10 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     QWidget *contents = uiWidget->findChild<QWidget*>("contents");
     QGridLayout *layout = (QGridLayout*)contents->layout();
 
+    layout->addWidget(new QLabel(tr("Loaded")), 0, 0, Qt::AlignLeft);
+    layout->addWidget(new QLabel(tr("Version")), 0, 1, Qt::AlignLeft);
+    layout->addWidget(new QLabel(tr("Enabled")), 0, 2, Qt::AlignLeft);
+
     int height = 0;
 
     connect(m_hub, SIGNAL(pluginDataComplete(const QString &, const PluginData *)), SLOT(handleDataComplete(const QString &, const PluginData *)));
@@ -84,6 +89,9 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
     m_dir->setFilter(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
     QStringList entries = m_dir->entryList();
     for (int i=0; i<entries.length(); i++) {
+
+        LayoutData *layoutData = new LayoutData();
+
         QString name = entries[i];
 
         QString infoName = name;
@@ -117,44 +125,73 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         }
 
         name.remove(QRegExp("\\.afplugin(\\.off)*$"));
+
+        layoutData->name = name;
+        layoutData->infoId = infoId;
+        if (entries[i].endsWith("afplugin")) {
+            layoutData->loaded = true;
+        }
+
         QString internalName = m_config->getString(name,NULL);
         if (internalName == NULL) {
             internalName = infoName;
             m_config->setString(name,infoName);
         }
+        layoutData->internalName = internalName;
+
+        QLabel *label = new QLabel(tr("not loaded"));
+        label->setToolTip(tr("<html>This plugin is disabled or could not load.</html>"));
+        layoutData->infoLabel = label;
+
         QCheckBox *c = new QCheckBox(name, contents);
-        m_cblist.insert(internalName, c);
         c->setFocusPolicy(Qt::NoFocus);
-        QLabel *cc = new QLabel(tr("not loaded"));
-        cc->setToolTip(tr("<html>This plugin is disabled or could not be loaded by AfterShotPro.</html>"));
-        m_enlist.insert(internalName, cc);
+        c->setToolTip(QString("%1\ninternal name=%2").arg(name).arg(internalName));
+        layoutData->loadedCB = c;
+
+        if (layoutData->loaded) {
+            label->setText(tr("loaded"));
+            label->setToolTip(tr("<html>This plugin does not support asPluginManager.</html>"));
+            c->setChecked(true);
+            c->setStyleSheet("QCheckBox { font-weight: bold; };");
+        }
+
         QAbstractButton *cv = new QPushButton(infoVersion);
+        cv->setFocusPolicy(Qt::NoFocus);
         cv->setFixedHeight(16);
         cv->setFixedWidth(60);
         cv->setEnabled(false);
-        cv->setToolTip(tr("There is no version info available for this plugin."));
-        m_vlist.insert(infoId, cv);
-        if (entries[i].endsWith("afplugin")) {
-            if (m_config->checkForUpdates()) {
-                this->checkForUpdates(infoId, infoSDK, infoVersion);
-            }
-            c->setChecked(true);
-            c->setStyleSheet("QCheckBox { font-weight: bold; };");
-            cc->setText(tr("no ToolData"));
-            cc->setToolTip(tr("<html>This plugin does not support additional info for asPluginManager. If it would, it would be possible to show its enabled state.</html>"));
-        }
-        layout->addWidget(c, i, 0, Qt::AlignLeft);
-        layout->addWidget(cv, i, 1, Qt::AlignLeft);
+        cv->setToolTip(tr("No update info available."));
+        layoutData->versionBTN = cv;
+
+        layout->addWidget(c, i+1, 0, Qt::AlignLeft | Qt::AlignTop);
+        layout->addWidget(cv, i+1, 1, Qt::AlignLeft | Qt::AlignTop);
         layout->setHorizontalSpacing(5);
-        layout->addWidget(cc, i, 2, Qt::AlignLeft);
-        layout->setRowStretch(i,0);
+        QWidget *boxWidget = new QWidget();
+        layoutData->boxWidget = boxWidget;
+        QGridLayout *boxLayout = new QGridLayout(boxWidget);
+        layoutData->boxLayout = boxLayout;
+        boxLayout->setHorizontalSpacing(5);
+        boxLayout->setVerticalSpacing(0);
+        boxLayout->setMargin(0);
+        boxWidget->setLayout(boxLayout);
+        boxLayout->addWidget(label);
+        layout->addWidget(boxWidget, i+1, 2, Qt::AlignLeft);
+        layout->setRowStretch(i+1,0);
         connect(c, SIGNAL( clicked() ), SLOT( handleClick() ) );
         height += c->height();
         c->setProperty("internalName", QVariant(internalName));
-        layout->setRowStretch(i+1,1);
+        layout->setRowStretch(i+2,1);
+
+        m_layoutData.insert(internalName, layoutData);
+
+        if (layoutData->loaded && m_config->checkForUpdates()) {
+            this->checkForUpdates(infoId, infoSDK, infoVersion);
+        }
+
     }
     layout->setColumnStretch(0,1);
     layout->setColumnStretch(1,0);
+    layout->setColumnStretch(2,0);
     uiWidget->setMinimumSize(100, min(height, m_config->toolBoxHeight()));
 
     connect( m_hub,
@@ -214,19 +251,18 @@ bool asPluginManager::finish() {
 }
 
 void asPluginManager::handleHotnessChanged( const PluginImageSettings &options ) {
-
-    qDebug() << "asPluginManager::handleHotnessChanged #toolList =" << m_toolDataList.size();
-
+    static bool firstRun = true;
     // ask the plugins for their ToolData if not done already
-    if (m_toolDataList.isEmpty()) {
-        QHashIterator<QString, QCheckBox*> i(m_cblist);
+    if (firstRun) {
+        QHashIterator<QString, LayoutData*> i(m_layoutData);
         while (i.hasNext()) {
-            QCheckBox *c = i.next().value();
-            // get their internal names from the config file, use directory name as default
-            QString dataName = QString("%1:ToolData").arg(c->property("internalName").toString());
+            LayoutData *layoutData = i.next().value();
+            QString internalName = layoutData->internalName;
+            QString dataName = QString("%1:ToolData").arg(internalName);
             qDebug() << "asPluginManager: start PluginData" << dataName;
             m_hub->startPluginData(dataName);
         }
+        firstRun = false;
     } else {
         for (int layer = 0; layer<options.count(); layer++) {
             checkOptions(options, layer);
@@ -234,39 +270,29 @@ void asPluginManager::handleHotnessChanged( const PluginImageSettings &options )
     }
 }
 
+
 void asPluginManager::checkOptions(const PluginImageSettings &options, int layer) {
     if (options.options(layer)) {
-        qDebug() << "asPluginManager: checking in layer" << layer;
-        for (int i=0; i<m_toolDataList.size(); i++) {
-            int ownerId = m_toolDataList[i]->ownerId;
-            QString owner = m_toolDataList[i]->owner;
-            qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId;
-            QLabel *c = m_enlist.find(owner).value();
-            c->setText(tr("no optionId"));
-            c->setToolTip(tr("<html>This plugin provides asPluginManager support, but has no image relevant enabled option.</html>"));
-            for (int j=0; j<m_toolDataList[i]->enabledIds.size(); j++) {
-                c->setText(tr("disabled"));
-                c->setStyleSheet("QLabel { font-weight: bold; }");
-                qDebug() << "asPluginManager: checking on enabled ownerId =" << ownerId << "option =" << m_toolDataList[i]->enabledIds.at(j);
-                bool ok;
-                bool enabled = options.options(0)->getBool(m_toolDataList[i]->enabledIds.at(j), ownerId, ok);
-                if (ok) {
-                    // qDebug() << "asPluginManager: ok";
-                    if (c) {
-                        qDebug() << "asPluginManager:" << owner << "enabled =" << enabled;
-                        if (enabled) {
-                            c->setText(tr("enabled"));
-                            c->setStyleSheet("QLabel { font-weight: bold; }");
-                            break;
+        // qDebug() << "asPluginManager: checking in layer" << layer;
+        QHashIterator<QString, LayoutData*> i(m_layoutData);
+        while (i.hasNext()) {
+            LayoutData *layoutData = i.next().value();
+            if (layoutData->toolData != NULL) {
+                QListIterator<Option> idIter(layoutData->toolData->enabledIds);
+                while (idIter.hasNext()) {
+                    Option option = idIter.next();
+                    QHash<int, QCheckBox*>::const_iterator iter = layoutData->enabledCBHash.find(option.id);
+                    if (iter != layoutData->enabledCBHash.end() && iter.key() == option.id) {
+                        bool ok;
+                        bool enabled = options.options(0)->getBool(option.id, layoutData->toolData->ownerId, ok);
+                        if (ok) {
+                            QCheckBox *cb = iter.value();
+                            cb->setChecked(enabled);
                         }
                     }
-                } else {
-                    c->setText(tr("wrong optionId?"));
-                    c->setStyleSheet("QLabel { font-weight: normal; }");
-
                 }
             }
-            c->update();
+            layoutData->boxLayout->update();
         }
     }
 }
@@ -280,19 +306,36 @@ void asPluginManager::handleSettingsChanged( const PluginImageSettings &options,
 
 void asPluginManager::handleDataComplete(const QString &dataName, const PluginData *data) {
 
-    qDebug() << "asPluginManager::handleDataComplete" << data;
-
     if (dataName.endsWith(":ToolData")) {
         const ToolData *toolData = (const ToolData*)(data);
         if (toolData) {
-            if (toolData->version >= 1) {
-                ToolData *ourToolData = new ToolData(m_hub);
-                *ourToolData = *toolData;
-                m_toolDataList.append(ourToolData);
-                QLabel *c = m_enlist.find(ourToolData->owner).value();
-                c->setText(tr("waiting for HC"));
-                c->setToolTip(tr("<html>Further information will be available after the next hotness change.</html>"));
-                qDebug() << "asPluginManager: data complete" << dataName << "OwnerId =" << ourToolData->ownerId;
+            ToolData *ourToolData = new ToolData(*toolData); // migration from ... -> v2
+            if (ourToolData->version >= 2) {
+                qDebug() << "asPluginManager: data complete v2" << dataName << "OwnerId =" << ourToolData->ownerId;
+                LayoutData *layoutData = m_layoutData.find(ourToolData->owner).value();
+                layoutData->toolData = ourToolData;
+                layoutData->loadedCB->setToolTip(QString("%1\ninternal name=%2\nidentifier=%3\nid=%4")
+                    .arg(layoutData->name).arg(layoutData->internalName)
+                    .arg(layoutData->infoId).arg(layoutData->toolData->ownerId));
+                QListIterator<Option> options(ourToolData->enabledIds);
+                int i = 0;
+                while (options.hasNext()) {
+                    Option option = options.next();
+                    QCheckBox *cb = new QCheckBox(option.shortName.isEmpty() ? tr("enable") : option.shortName);
+                    cb->setToolTip(option.longName.isEmpty() ? option.hint : option.longName);
+                    cb->setProperty("internalName", ourToolData->owner);
+                    cb->setProperty("ownerId", ourToolData->ownerId);
+                    cb->setProperty("optionId", option.id);
+                    layoutData->enabledCBHash.insert(option.id, cb);
+                    cb->setFocusPolicy(Qt::NoFocus);
+                    cb->setStyleSheet("QCheckBox::indicator { width:10px; height:10px; spacing 5px; }");
+                    layoutData->boxLayout->addWidget(cb, i/2, i%2);
+                    connect(cb, SIGNAL(clicked()), this, SLOT(enablerClicked()));
+                    i++;
+                }
+                layoutData->boxLayout->removeWidget(layoutData->infoLabel);
+                layoutData->infoLabel->setText("");
+                layoutData->boxLayout->update();
             } else {
                 qDebug() << "asPluginManager: old ToolData version:" << toolData->version << "for" << dataName;
             }
@@ -300,7 +343,6 @@ void asPluginManager::handleDataComplete(const QString &dataName, const PluginDa
             qDebug() << "asPluginManager: data complete" << dataName << "got NULL as data.";
         }
     }
-
 }
 
 void asPluginManager::handleDataInvalid(const QString &dataName) {
@@ -314,10 +356,8 @@ void asPluginManager::handleDataInvalid(const QString &dataName) {
 
 PluginDependency *asPluginManager::createDependency(const QString &depName) {
 
-    qDebug() << "asPluginManager::createDependency";
-
     if (depName == "ToolData") {
-        ToolData *toolData = new ToolData(m_hub);
+        ToolData *toolData = new ToolData();
         if (toolData) {
             toolData->owner = name();
             toolData->group = group();
@@ -340,30 +380,51 @@ void asPluginManager::webInfosReady() {
 
     qDebug() << "asPluginManager::webInfosReady" << webInfos->identifier()
              << "web:" << webInfos->webVersion() << "installed:" << webInfos->installedVersion();
-    QAbstractButton *c = m_vlist.find(webInfos->identifier()).value();
-    if (c!=NULL) {
-        c->setStyleSheet("QAbstractButton { color : rgb(0, 80, 0); font-weight : bold; }");
-        c->setToolTip(tr("This plugin is installed in its newest version."));
-    }
-    if (webInfos->isWebNewer()) {
-        QString text = QString(tr("There is a newer version of %1 available. "
-                               "It is version %2. You are running %3. "
-                               "You can download it under the following url: <a href='%4'>%4</a>"))
-                       .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
-        if (c!=NULL) {
-            c->setStyleSheet("QAbstractButton { color : rgb(100, 0, 0); font-weight : bold; }");
-            c->setText(tr("update"));
-            c->setToolTip(text);
-            c->setEnabled(true);
-            connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
-        } else {
-            QMessageBox::information(NULL, webInfos->name(), text);
+    qDebug() << "m_layoutData size = " << m_layoutData.size();
+
+    QHashIterator<QString, LayoutData*> i(m_layoutData);
+    while (i.hasNext()) {
+        LayoutData *layoutData = i.next().value();
+        if (layoutData->infoId == webInfos->identifier()) {
+            QAbstractButton *c = layoutData->versionBTN;
+            qDebug() << "VersionButton =" << c;
+            if (c!=NULL) {
+                c->setStyleSheet("QAbstractButton { color : rgb(0, 80, 0); font-weight : bold; }");
+                c->setToolTip(tr("<html>No newer version available.</html>"));
+            }
+            if (webInfos->isWebNewer()) {
+                QString text = QString(tr("There is a newer version of %1 available. "
+                                       "It is version %2. You are running %3. "
+                                       "You can download it under the following url: <a href='%4'>%4</a>"))
+                               .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
+                if (c!=NULL) {
+                    c->setStyleSheet("QAbstractButton { color : rgb(100, 0, 0); font-weight : bold; }");
+                    c->setText(tr("update"));
+                    c->setToolTip(text);
+                    c->setEnabled(true);
+                    connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
+                } else {
+                    QMessageBox::information(NULL, webInfos->name(), text);
+                }
+            }
         }
     }
     delete webInfos;
 }
 
 void asPluginManager::handleClickForUpdate() {
-    QAbstractButton *button = (QAbstractButton*) sender();
+    QAbstractButton *button = (QAbstractButton*)sender();
     QMessageBox::information(NULL, tr("Update-Info from asPluginManager"), button->toolTip());
+}
+
+void asPluginManager::enablerClicked() {
+    // qDebug() << "asPluginManager: enabler clicked";
+    QCheckBox *cc = (QCheckBox*)sender();
+    int ownerId = cc->property("ownerId").toInt();
+    int optionId = cc->property("optionId").toInt();
+    PluginOptionList *optionList = m_hub->beginSettingsChange("asPluginManager enable/disable other plugin.");
+    if (optionList != NULL) {
+        optionList->setBool(optionId, ownerId, cc->isChecked());
+        m_hub->endSettingChange();
+    }
 }
