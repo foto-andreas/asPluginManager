@@ -3,8 +3,8 @@
 /** \mainpage asPluginManager - Plugin Management for AfterShot Pro
  *
  * @author    Andeas Schrell
- * @version   1.0.7
- * @date      2012-07-08
+ * @version   1.0.8
+ * @date      2012-07-10
  * @warning   Like removing the plugins manually, disabling a plugin here has the following effect:
  *            If you change settings for an image with a plugin disabled all settings of that plugin are lost for the image.
  *
@@ -52,7 +52,6 @@ git clone http://schrell.de/PluginDefaults.git
  *
  * @bug    additional hotness change required to get ToolData (I see this as an ASP bug)
  *
- * @todo   enable/disable checkbox for the plugins who support ToolData
  * @todo   perhaps hide plugins from the ui by manipulating their Info file
  * @todo   select/unselect all
  * @todo   save and reload configurations

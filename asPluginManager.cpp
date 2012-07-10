@@ -174,7 +174,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         boxLayout->setVerticalSpacing(0);
         boxLayout->setMargin(0);
         boxWidget->setLayout(boxLayout);
-        boxLayout->addWidget(label);
+        layout->addWidget(label, i+1, 2, Qt::AlignLeft);
         layout->addWidget(boxWidget, i+1, 2, Qt::AlignLeft);
         layout->setRowStretch(i+1,0);
         connect(c, SIGNAL( clicked() ), SLOT( handleClick() ) );
@@ -257,6 +257,7 @@ void asPluginManager::handleHotnessChanged( const PluginImageSettings &options )
         QHashIterator<QString, LayoutData*> i(m_layoutData);
         while (i.hasNext()) {
             LayoutData *layoutData = i.next().value();
+            layoutData->boxWidget->setVisible(false);
             QString internalName = layoutData->internalName;
             QString dataName = QString("%1:ToolData").arg(internalName);
             qDebug() << "asPluginManager: start PluginData" << dataName;
@@ -264,6 +265,14 @@ void asPluginManager::handleHotnessChanged( const PluginImageSettings &options )
         }
         firstRun = false;
     } else {
+        QHashIterator<QString, LayoutData*> i(m_layoutData);
+        while (i.hasNext()) {
+            LayoutData *layoutData = i.next().value();
+            if (layoutData->toolData) {
+                layoutData->infoLabel->setVisible(false);
+            }
+            layoutData->boxWidget->setVisible(true);
+        }
         for (int layer = 0; layer<options.count(); layer++) {
             checkOptions(options, layer);
         }
@@ -333,8 +342,8 @@ void asPluginManager::handleDataComplete(const QString &dataName, const PluginDa
                     connect(cb, SIGNAL(clicked()), this, SLOT(enablerClicked()));
                     i++;
                 }
-                layoutData->boxLayout->removeWidget(layoutData->infoLabel);
-                layoutData->infoLabel->setText("");
+                layoutData->infoLabel->setText(tr("wait for HC"));
+                layoutData->infoLabel->setToolTip(tr("<html>Info available after next image selection.</html>"));
                 layoutData->boxLayout->update();
             } else {
                 qDebug() << "asPluginManager: old ToolData version:" << toolData->version << "for" << dataName;
