@@ -64,9 +64,9 @@ git clone http://schrell.de/PluginDefaults.git
 #include <QAbstractButton>
 #include <QList>
 #include <QString>
-#include <QVBoxLayout>
 #include <QCheckBox>
 #include <QLabel>
+#include <QGridLayout>
 
 #include <QFile>
 #include <QDir>
@@ -139,13 +139,13 @@ public slots:
 
     void handleDataComplete(const QString &dataName, const PluginData *data);
     void handleDataInvalid(const QString &dataName);
-    void webInfosReady();
+    void webInfosReady(QList<WebInfos*>&);
 
     void enablerClicked();
 
 private:
 
-    void checkForUpdates(QString id, int sdkVersion, QString insalledVersion);
+    void checkForUpdates(int sdkVersion);
     void checkOptions(const PluginImageSettings &options, int layer);
 
     QDir                    *m_dir;
@@ -158,7 +158,7 @@ private:
     int                     m_groupId;
 
     QHash<QString, LayoutData*> m_layoutData;
-
+    QGridLayout             *m_layout;
     WebInfos                *m_webInfos;
 
 };

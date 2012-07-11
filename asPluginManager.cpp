@@ -3,14 +3,13 @@
 #include <QObject>
 #include <QAbstractButton>
 #include <QCheckBox>
-#include <QVBoxLayout>
 #include <QDebug>
 #include <QString>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QToolButton>
-#include <QHBoxLayout>
 #include <QWidget>
+#include <QGridLayout>
 
 #include <QFile>
 #include <QDir>
@@ -55,15 +54,15 @@ bool asPluginManager::init(PluginHub *hub, int id, int groupId, const QString&) 
     return true;
 }
 
-void asPluginManager::checkForUpdates(QString id, int sdkVersion, QString installedVersion) {
+void asPluginManager::checkForUpdates(int sdkVersion) {
     // check for updates
     if (m_config->checkForUpdates()) {
-        WebInfos *webInfos = new WebInfos(id, QString("%1").arg(sdkVersion), installedVersion);
+        WebInfos *webInfos = new WebInfos("%", QString("%1").arg(sdkVersion), NULL);
         connect(webInfos,
-                SIGNAL(ready()),
-                SLOT(webInfosReady()));
-        qDebug() << "asPluginManager: fetching update infos for" << id;
-        webInfos->fetch();
+                SIGNAL(readyAll(QList<WebInfos*>&)),
+                SLOT(webInfosReady(QList<WebInfos*>&)));
+        qDebug() << "asPluginManager: fetching update infos";
+        webInfos->fetchAll();
     }
 }
 
@@ -75,6 +74,8 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
 
     QWidget *contents = uiWidget->findChild<QWidget*>("contents");
     QGridLayout *layout = (QGridLayout*)contents->layout();
+
+    m_layout = layout;
 
     layout->addWidget(new QLabel(tr("Loaded")), 0, 0, Qt::AlignLeft);
     layout->addWidget(new QLabel(tr("Version")), 0, 1, Qt::AlignLeft);
@@ -158,7 +159,6 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         }
 
         QPushButton *cv = new QPushButton(infoVersion);
-//        cv->setFlat(false);
         cv->setStyleSheet("QWidget { background: rgb(40,40,40); }");
         cv->setFocusPolicy(Qt::NoFocus);
         cv->setFixedHeight(16);
@@ -188,10 +188,9 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
 
         m_layoutData.insert(internalName, layoutData);
 
-        if (layoutData->loaded && m_config->checkForUpdates()) {
-            this->checkForUpdates(infoId, infoSDK, infoVersion);
-        }
-
+    }
+    if (m_config->checkForUpdates()) {
+        this->checkForUpdates(8);
     }
     layout->setColumnStretch(0,1);
     layout->setColumnStretch(1,0);
@@ -387,46 +386,68 @@ PluginDependency *asPluginManager::createDependency(const QString &depName) {
 
 }
 
-void asPluginManager::webInfosReady() {
-
-    WebInfos *webInfos = (WebInfos*)(sender());
-
-    qDebug() << "asPluginManager::webInfosReady" << webInfos->identifier()
-             << "web:" << webInfos->webVersion() << "installed:" << webInfos->installedVersion();
-    qDebug() << "m_layoutData size = " << m_layoutData.size();
-
-    QHashIterator<QString, LayoutData*> i(m_layoutData);
-    while (i.hasNext()) {
-        LayoutData *layoutData = i.next().value();
-        if (layoutData->infoId == webInfos->identifier()) {
-            QAbstractButton *c = layoutData->versionBTN;
-            qDebug() << "VersionButton =" << c;
-            c->setStyleSheet("QAbstractButton { color : rgb(0, 120, 0); font-weight : bold; background : rgb(40,40,40); }");
-            c->setToolTip(tr("<html>No newer version available.</html>"));
-            if (webInfos->isWebNewer()) {
-                QString text = QString(tr("There is a newer version of %1 available. "
-                                       "It is version %2. You are running %3. "
-                                       "You can download it under the following url: <a href='%4'>%4</a>"))
-                               .arg(webInfos->name(), webInfos->webVersion(), webInfos->installedVersion(), webInfos->link());
-                c->setStyleSheet("QAbstractButton { color : rgb(150, 0, 0); font-weight : bold; background : rgb(40,40,40); }");
-                c->setText(tr("update"));
-                c->setToolTip(tr("<html>Click to see the update link.</html>"));
-                c->setEnabled(true);
-                connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
-            } else {
-                if (WebInfos::formatVersion(webInfos->installedVersion()) > WebInfos::formatVersion(webInfos->webVersion())) {
-                    c->setStyleSheet("QAbstractButton { color : rgb(150, 150, 0); font-weight : bold; background : rgb(40,40,40); }");
-                    c->setToolTip(tr("<html>Newer version installed locally.</html>"));
+void asPluginManager::webInfosReady(QList<WebInfos*>& webInfosList) {
+    int n = webInfosList.size();
+    QListIterator<WebInfos*> wilisti(webInfosList);
+    while (wilisti.hasNext()) {
+        WebInfos *webInfos = wilisti.next();
+        QHashIterator<QString, LayoutData*> i(m_layoutData);
+        while (i.hasNext()) {
+            qDebug() << "asPluginManager: webinfos for" << webInfos->identifier();
+            LayoutData *layoutData = i.next().value();
+            if (layoutData->infoId == webInfos->identifier()) {
+                QAbstractButton *c = layoutData->versionBTN;
+                QString formWeb = WebInfos::formatVersion(webInfos->webVersion());
+                QString formIns = WebInfos::formatVersion(c->text());
+                c->setStyleSheet("QAbstractButton { color : rgb(0, 140, 0); font-weight : bold; background : rgb(40,40,40); }");
+                c->setToolTip(tr("<html>No newer version available.</html>"));
+                if (formWeb > formIns) {
+                    c->setProperty("updateText", QString(tr("There is a newer version of %1 available. "
+                                           "It is version %2. You are running %3. "
+                                           "You can download it under the following url: <a href='%4'>%4</a>"))
+                                   .arg(webInfos->name(), webInfos->webVersion(), c->text(), webInfos->link()));
+                    c->setStyleSheet("QAbstractButton { color : rgb(180, 0, 0); font-weight : bold; background : rgb(40,40,40); }");
+                    c->setText(tr("update"));
+                    c->setToolTip(tr("<html>Click to see the update link.</html>"));
+                    c->setEnabled(true);
+                    connect(c, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
+                } else {
+                    if (formIns > formWeb) {
+                        c->setStyleSheet("QAbstractButton { color : rgb(150, 150, 0); font-weight : bold; background : rgb(40,40,40); }");
+                        c->setToolTip(tr("<html>Newer version installed locally.</html>"));
+                    }
                 }
+                webInfos->setProperty("local", true);
             }
         }
     }
-    delete webInfos;
+    wilisti.toFront();
+    n++;
+    while (wilisti.hasNext()) {
+        WebInfos *wi = wilisti.next();
+        if (!wi->property("local").toBool()) {
+            QLabel *c = new QLabel(wi->name());
+            QPushButton *cv = new QPushButton(wi->webVersion());
+            cv->setStyleSheet("QWidget { background: rgb(40,40,40); }");
+            cv->setFocusPolicy(Qt::NoFocus);
+            cv->setFixedHeight(16);
+            cv->setFixedWidth(60);
+            cv->setToolTip(tr("<html>Click to see the download link.</html>"));
+            cv->setProperty("updateText", QString(tr("There is an uninstalled plugin %1 available. "
+                            "You can download it under the following url: <a href='%2'>%2</a>"))
+                           .arg(c->text(), wi->link()));
+            connect(cv, SIGNAL(clicked()), SLOT(handleClickForUpdate()));
+            QLabel *ci = new QLabel(tr("available"));
+            m_layout->addWidget(c,++n, 0);
+            m_layout->addWidget(cv,n,1);
+            m_layout->addWidget(ci,n,2);
+        }
+    }
 }
 
 void asPluginManager::handleClickForUpdate() {
     QAbstractButton *button = (QAbstractButton*)sender();
-    QMessageBox::information(NULL, tr("Update-Info from asPluginManager"), button->toolTip());
+    QMessageBox::information(NULL, tr("Update-Info from asPluginManager"), button->property("updateText").toString());
 }
 
 void asPluginManager::enablerClicked() {
