@@ -178,6 +178,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         boxLayout->setVerticalSpacing(0);
         boxLayout->setMargin(0);
         boxWidget->setLayout(boxLayout);
+        boxWidget->setVisible(false);
         layout->addWidget(label, i+1, 2, Qt::AlignLeft);
         layout->addWidget(boxWidget, i+1, 2, Qt::AlignLeft);
         layout->setRowStretch(i+1,0);
