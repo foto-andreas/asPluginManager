@@ -388,10 +388,11 @@ PluginDependency *asPluginManager::createDependency(const QString &depName) {
 }
 
 void asPluginManager::webInfosReady(QList<WebInfos*>& webInfosList) {
-    int n = webInfosList.size();
+    int n = m_layoutData.size();
     QListIterator<WebInfos*> wilisti(webInfosList);
     while (wilisti.hasNext()) {
         WebInfos *webInfos = wilisti.next();
+        webInfos->setProperty("local", false);
         QHashIterator<QString, LayoutData*> i(m_layoutData);
         while (i.hasNext()) {
             qDebug() << "asPluginManager: webinfos for" << webInfos->identifier();
