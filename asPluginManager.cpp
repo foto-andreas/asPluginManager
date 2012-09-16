@@ -138,7 +138,6 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
         QString internalName = m_config->getString(name,NULL);
         if (internalName == NULL) {
             internalName = infoName;
-            m_config->setString(name,infoName);
         }
         layoutData->internalName = internalName;
 
