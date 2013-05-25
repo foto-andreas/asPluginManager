@@ -6,112 +6,112 @@
     <message>
         <location filename="../asPluginManager.cpp" line="50"/>
         <source>Configuration file problem with file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Problème de fichier de configuration avec le fichier : </translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="80"/>
         <source>Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Installé</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="81"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Version</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="82"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>État</translation>
+    </message>
+    <message>
+        <location filename="../asPluginManager.cpp" line="144"/>
+        <source>not loaded</source>
+        <translation>Non installé</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="145"/>
-        <source>not loaded</source>
-        <translation type="unfinished"></translation>
+        <source>&lt;html&gt;This plugin is disabled or could not load.&lt;/html&gt;</source>
+        <translation>&lt;html&gt;Ce plugin est inactivé ou n&apos;a pu être installé.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="146"/>
-        <source>&lt;html&gt;This plugin is disabled or could not load.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../asPluginManager.cpp" line="154"/>
+        <source>loaded</source>
+        <translation>installé</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="155"/>
-        <source>loaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../asPluginManager.cpp" line="156"/>
         <source>&lt;html&gt;This plugin does not support asPluginManager.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Ce plugin est incompatible avec asPluginManager.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="167"/>
+        <location filename="../asPluginManager.cpp" line="166"/>
         <source>No update info available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Information de m.à.j. non disponible.</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="336"/>
         <source>enable</source>
-        <translation type="unfinished"></translation>
+        <translation>active</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="348"/>
         <source>wait for HC</source>
-        <translation type="unfinished"></translation>
+        <translation>Attente de sélection</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="349"/>
         <source>&lt;html&gt;Info available after next image selection.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Info disponible après sélection d&apos;une image.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="403"/>
+        <location filename="../asPluginManager.cpp" line="404"/>
         <source>&lt;html&gt;No newer version available.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Pas de nouvelle version disponible.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="223"/>
         <source>You disabled asPluginManager itself.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous avez désactivé asPluginManager lui-même.</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="405"/>
+        <location filename="../asPluginManager.cpp" line="406"/>
         <source>There is a newer version of %1 available. It is version %2. You are running %3. You can download it under the following url: &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../asPluginManager.cpp" line="410"/>
-        <source>update</source>
-        <translation type="unfinished"></translation>
+        <translation>Une version plus récente de %1 est disponible. C&apos;est la version %2. Vous utilisez la %3. Vous pouvez la télécharger via l&apos;URL : &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="411"/>
+        <source>update</source>
+        <translation>m.à.j</translation>
+    </message>
+    <message>
+        <location filename="../asPluginManager.cpp" line="412"/>
         <source>&lt;html&gt;Click to see the update link.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Cliquez pour voir le lien de m.à.j.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="417"/>
+        <location filename="../asPluginManager.cpp" line="418"/>
         <source>&lt;html&gt;Newer version installed locally.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../asPluginManager.cpp" line="435"/>
-        <source>&lt;html&gt;Click to see the download link.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Version plus récente installée localement.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../asPluginManager.cpp" line="436"/>
+        <source>&lt;html&gt;Click to see the download link.&lt;/html&gt;</source>
+        <translation>&lt;html&gt;Cliquez pour voir le lien de téléchargement.&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../asPluginManager.cpp" line="437"/>
         <source>There is an uninstalled plugin %1 available. You can download it under the following url: &lt;a href=&apos;%2&apos;&gt;%2&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Un plugin %1 non installé est disponible. Vous pouvez le télécharger via l&apos;URL : &lt;a href=&apos;%2&apos;&gt;%2&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="440"/>
+        <location filename="../asPluginManager.cpp" line="441"/>
         <source>available</source>
-        <translation type="unfinished"></translation>
+        <translation>disponible</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="450"/>
+        <location filename="../asPluginManager.cpp" line="451"/>
         <source>Update-Info from asPluginManager</source>
-        <translation type="unfinished"></translation>
+        <translation>Gestion de plugins asPluginManager</translation>
     </message>
 </context>
 <context>

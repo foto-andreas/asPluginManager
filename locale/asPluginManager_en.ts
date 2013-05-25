@@ -24,27 +24,27 @@
         <translation>State</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="145"/>
+        <location filename="../asPluginManager.cpp" line="144"/>
         <source>not loaded</source>
-        <translation></translation>
+        <translation>not loaded</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="146"/>
+        <location filename="../asPluginManager.cpp" line="145"/>
         <source>&lt;html&gt;This plugin is disabled or could not load.&lt;/html&gt;</source>
         <translation>&lt;html&gt;This plugin is disabled or could not load.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="155"/>
+        <location filename="../asPluginManager.cpp" line="154"/>
         <source>loaded</source>
         <translation>loaded</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="156"/>
+        <location filename="../asPluginManager.cpp" line="155"/>
         <source>&lt;html&gt;This plugin does not support asPluginManager.&lt;/html&gt;</source>
         <translation>&lt;html&gt;This plugin does not support asPluginManager.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="167"/>
+        <location filename="../asPluginManager.cpp" line="166"/>
         <source>No update info available.</source>
         <translation>No update info available.</translation>
     </message>
@@ -64,7 +64,7 @@
         <translation>&lt;html&gt;Info available after next image selection.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="403"/>
+        <location filename="../asPluginManager.cpp" line="404"/>
         <source>&lt;html&gt;No newer version available.&lt;/html&gt;</source>
         <translation>&lt;html&gt;No newer version available.&lt;/html&gt;</translation>
     </message>
@@ -74,42 +74,42 @@
         <translation>You disabled asPluginManager itself.</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="405"/>
+        <location filename="../asPluginManager.cpp" line="406"/>
         <source>There is a newer version of %1 available. It is version %2. You are running %3. You can download it under the following url: &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt;</source>
         <translation>There is a newer version of %1 available. It is version %2. You are running %3. You can download it under the following url: &lt;a href=&apos;%4&apos;&gt;%4&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="410"/>
+        <location filename="../asPluginManager.cpp" line="411"/>
         <source>update</source>
         <translation>update</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="411"/>
+        <location filename="../asPluginManager.cpp" line="412"/>
         <source>&lt;html&gt;Click to see the update link.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Click to see the update link.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="417"/>
+        <location filename="../asPluginManager.cpp" line="418"/>
         <source>&lt;html&gt;Newer version installed locally.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Newer version installed locally.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="435"/>
+        <location filename="../asPluginManager.cpp" line="436"/>
         <source>&lt;html&gt;Click to see the download link.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Click to see the download link.&lt;/html</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="436"/>
+        <location filename="../asPluginManager.cpp" line="437"/>
         <source>There is an uninstalled plugin %1 available. You can download it under the following url: &lt;a href=&apos;%2&apos;&gt;%2&lt;/a&gt;</source>
         <translation>There is an uninstalled plugin %1 available. You can download it under the following url: &lt;a href=&apos;%2&apos;&gt;%2&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="440"/>
+        <location filename="../asPluginManager.cpp" line="441"/>
         <source>available</source>
         <translation>available</translation>
     </message>
     <message>
-        <location filename="../asPluginManager.cpp" line="450"/>
+        <location filename="../asPluginManager.cpp" line="451"/>
         <source>Update-Info from asPluginManager</source>
         <translation>Update-Info from asPluginManager</translation>
     </message>
