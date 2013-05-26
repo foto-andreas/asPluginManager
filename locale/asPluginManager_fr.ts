@@ -49,6 +49,17 @@
         <translation>Information de m.à.j. non disponible.</translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="329"/>
+        <source>%1
+internal name=%2
+identifier=%3
+id=%4</source>
+        <translation>%1
+nom interne=%2
+identifiant=%3
+id=%4</translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="336"/>
         <source>enable</source>
         <translation>active</translation>

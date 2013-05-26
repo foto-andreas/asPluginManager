@@ -49,6 +49,17 @@
         <translation>Keine Update-Information verfügbar.</translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="329"/>
+        <source>%1
+internal name=%2
+identifier=%3
+id=%4</source>
+        <translation>%1
+interner Name=%2
+Kennung=%3
+ID=%4</translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="336"/>
         <source>enable</source>
         <translation>ein</translation>

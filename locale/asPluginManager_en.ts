@@ -49,6 +49,17 @@
         <translation>No update info available.</translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="329"/>
+        <source>%1
+internal name=%2
+identifier=%3
+id=%4</source>
+        <translation>%1
+internal name=%2
+identifier=%3
+id=%4</translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="336"/>
         <source>enable</source>
         <translation>enable</translation>

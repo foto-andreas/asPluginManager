@@ -326,7 +326,7 @@ void asPluginManager::handleDataComplete(const QString &dataName, const PluginDa
                 qDebug() << "asPluginManager: data complete v2" << dataName << "OwnerId =" << ourToolData->ownerId;
                 LayoutData *layoutData = m_layoutData.find(ourToolData->owner).value();
                 layoutData->toolData = ourToolData;
-                layoutData->loadedCB->setToolTip(QString("%1\ninternal name=%2\nidentifier=%3\nid=%4")
+                layoutData->loadedCB->setToolTip(QString(tr("%1\ninternal name=%2\nidentifier=%3\nid=%4"))
                     .arg(layoutData->name).arg(layoutData->internalName)
                     .arg(layoutData->infoId).arg(layoutData->toolData->ownerId));
                 QListIterator<Option> options(ourToolData->enabledIds);

@@ -49,6 +49,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="329"/>
+        <source>%1
+internal name=%2
+identifier=%3
+id=%4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="336"/>
         <source>enable</source>
         <translation type="unfinished"></translation>
