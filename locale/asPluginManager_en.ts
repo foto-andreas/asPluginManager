@@ -34,6 +34,13 @@
         <translation>&lt;html&gt;This plugin is disabled or could not load.&lt;/html&gt;</translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="150"/>
+        <source>%1
+internal name=%2</source>
+        <translation>%1
+internal name=%2</translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="154"/>
         <source>loaded</source>
         <translation>loaded</translation>

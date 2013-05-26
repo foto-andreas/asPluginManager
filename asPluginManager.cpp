@@ -147,7 +147,7 @@ void asPluginManager::toolWidgetCreated(QWidget *uiWidget) {
 
         QCheckBox *c = new QCheckBox(name, 0);
         c->setFocusPolicy(Qt::NoFocus);
-        c->setToolTip(QString("%1\ninternal name=%2").arg(name).arg(internalName));
+        c->setToolTip(QString(tr("%1\ninternal name=%2")).arg(name).arg(internalName));
         layoutData->loadedCB = c;
 
         if (layoutData->loaded) {

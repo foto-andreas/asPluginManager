@@ -34,6 +34,13 @@
         <translation>&lt;html&gt;Ce plugin est inactivé ou n&apos;a pu être installé.&lt;/html&gt;</translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="150"/>
+        <source>%1
+internal name=%2</source>
+        <translation>%1
+nom interne=%2</translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="154"/>
         <source>loaded</source>
         <translation>installé</translation>

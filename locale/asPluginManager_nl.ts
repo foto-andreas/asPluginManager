@@ -34,6 +34,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../asPluginManager.cpp" line="150"/>
+        <source>%1
+internal name=%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../asPluginManager.cpp" line="154"/>
         <source>loaded</source>
         <translation type="unfinished"></translation>
