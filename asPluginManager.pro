@@ -65,7 +65,7 @@ unix {
 QMAKE_POST_LINK += "echo 'extras...'"
 
 # we create the source documentation
-QMAKE_POST_LINK += "; doxygen"
+#QMAKE_POST_LINK += "; doxygen"
 
 # locale files
 QMAKE_POST_LINK += "; lrelease $${TARGET}.pro"
@@ -74,7 +74,8 @@ QMAKE_POST_LINK += "; lrelease $${TARGET}.pro"
 QMAKE_POST_LINK += "; strip 'lib$${TARGET}.so.$${VERSION}'"
 
 # we pack our plugin - I hate PZ
-QMAKE_POST_LINK += "; ../PluginDefaults/afz '$$TARGET' '$$VERSION' '$$IDENTIFIER' '$$AUTHOR' '$$SITE' "
+QMAKE_POST_LINK += "; ../PluginDefaults/afz '$$TARGET' '$$VERSION' '$$IDENTIFIER' '$$AUTHOR' '$$SITE' $$EX "
 }
 }
+
 
